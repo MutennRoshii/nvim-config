@@ -1,6 +1,31 @@
 -- since this is just an example spec, don't actually load anything here and return an empty spec
--- stylua: ignore
-if true then return {} end
+if true then
+  return {
+    {
+      "rebelot/kanagawa.nvim",
+      priority = 1000,
+      lazy = false,
+      opts = {
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = "none",
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      "LazyVim/LazyVim",
+      opts = {
+        colorscheme = "kanagawa",
+      },
+    },
+    { "brenoprata10/nvim-highlight-colors" },
+  }
+end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
 --
