@@ -1,2 +1,18 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
-require("config.lazy")
+require("user.launch")
+require("user.options")
+require("user.keymaps")
+require("user.autocmds")
+
+spec("user.plugins.colorscheme")
+spec("user.plugins.lualine")
+spec("user.plugins.extras")
+spec("user.plugins.copilot")
+spec("user.plugins.git")
+spec("user.plugins.treesitter")
+spec("user.plugins.telescope")
+spec("user.plugins.java")
+spec("user.plugins.lsp")
+spec("user.plugins.cmp")
+spec("user.plugins.debug")
+
+require("user.lazy")
