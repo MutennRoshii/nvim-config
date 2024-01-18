@@ -29,9 +29,17 @@ vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
 
 -- [[ Buffer management ]]
+vim.keymap.set("n", "<S-h>", "<cmd>bp<CR>", { silent = true })
+vim.keymap.set("n", "<S-l>", "<cmd>bn<CR>", { silent = true })
 vim.keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { silent = true })
-vim.keymap.set("n", "<leader>]n", "<cmd>bn<CR>", { silent = true })
-vim.keymap.set("n", "<leader>[p", "<cmd>bp<CR>", { silent = true })
+vim.keymap.set("n", "<leader>bo", function ()
+    local current_buf=vim.api.nvim_get_current_buf()
+    for _,i in ipairs(vim.api.nvim_list_bufs()) do
+        if i~=current_buf then
+            vim.api.nvim_buf_delete(i,{})
+        end
+    end
+end)
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
