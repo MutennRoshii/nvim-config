@@ -18,34 +18,51 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "=", "=gv", { noremap = true, silent = true })
 -- Don't replace the register when pasting
 vim.keymap.set("x", "p", [["_dP]])
+-- Clear search with <esc>
+vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- [[ Window management ]]
-vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
+vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true, desc = "Go to left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true, desc = "Go to lower window" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true, desc = "Go to upper window" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true, desc = "Go to right window" })
 
 -- [[ Buffer management ]]
-vim.keymap.set("n", "<S-h>", "<cmd>bp<CR>", { silent = true })
-vim.keymap.set("n", "<S-l>", "<cmd>bn<CR>", { silent = true })
-vim.keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { silent = true })
-vim.keymap.set("n", "<leader>bo", function ()
-    local current_buf=vim.api.nvim_get_current_buf()
-    for _,i in ipairs(vim.api.nvim_list_bufs()) do
-        if i~=current_buf then
-            vim.api.nvim_buf_delete(i,{})
+vim.keymap.set("n", "<S-h>", "<cmd>bp<CR>", { silent = true, desc = "Go to prev buffer" })
+vim.keymap.set("n", "<S-l>", "<cmd>bn<CR>", { silent = true, desc = "Go to prev buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { silent = true, desc = "Go to prev buffer" })
+vim.keymap.set("n", "<leader>bo",
+    function()
+        local current_buf = vim.api.nvim_get_current_buf()
+        for _, i in ipairs(vim.api.nvim_list_bufs()) do
+            if i ~= current_buf then
+                vim.api.nvim_buf_delete(i, {})
+            end
         end
-    end
-end)
+    end,
+    { silent = true, desc = "Close all other buffers" })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+vim.keymap.set("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
+vim.keymap.set("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
+vim.keymap.set("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
+vim.keymap.set("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
+vim.keymap.set("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
+vim.keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
 -- Code action keymaps
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
+
+-- quit
+vim.keymap.set("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
